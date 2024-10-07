@@ -1,5 +1,5 @@
-#ifndef INCLUDED_MESSAGE_HPP
-#define INCLUDED_MESSAGE_HPP
+#ifndef INCLUDED_CHATSERVER_MESSAGE_HPP
+#define INCLUDED_CHATSERVER_MESSAGE_HPP
 
 #include <nlohmann/json.hpp>
 #include "Client.hpp"

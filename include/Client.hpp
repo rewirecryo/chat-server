@@ -1,5 +1,5 @@
-#ifndef INCLUDED_GRAW_CLIENT_HPP
-#define INCLUDED_GRAW_CLIENT_HPP
+#ifndef INCLUDED_CHATSERVER_CLIENT_HPP
+#define INCLUDED_CHATSERVER_CLIENT_HPP
 
 #include <string>
 #include <unistd.h>
