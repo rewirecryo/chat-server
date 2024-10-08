@@ -6,3 +6,8 @@ nlohmann::json Message::toJSON()const
 	j["msg_text"] = text;
 	return j;
 }
+
+void Message::fromJSON(const nlohmann::json &j)
+{
+	text = j["msg_text"];
+}

@@ -3,12 +3,15 @@
 
 #include <nlohmann/json.hpp>
 #include "Client.hpp"
+#include "Instruction.hpp"
 
 class Client;
 
-class Message
+class Message : public Instruction
 {
 public:
+	void fromJSON(const nlohmann::json &j);
+
 	/**
 	 * @brief Convert this object to a JSON object
 	 */
