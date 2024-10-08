@@ -10,6 +10,7 @@ DIR_SRC := src
 DIR_OBJ := obj
 
 FILES_SRC:=$(wildcard $(DIR_SRC)/*)
+FILES_DEP=$(patsubst $(DIR_SRC)/%.cpp, $(DIR_DEPS)/%.d, $(FILES_SRC))
 FILES_OBJ=$(patsubst $(DIR_SRC)/%.cpp, $(DIR_OBJ)/%.o, $(FILES_SRC))
 
 $(BINARY) : $(FILES_OBJ)
@@ -27,3 +28,5 @@ clean :
 	rm $(FILES_OBJ)
 
 .PHONY: clean
+
+.PRECIOUS: $(FILES_DEP)
