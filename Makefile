@@ -20,7 +20,7 @@ $(DIR_OBJ)/%.o : $(DIR_SRC)/%.cpp $(DIR_DEPS)/%.d
 	$(CXX) -o $@ $(CXXFLAGS) $(LIBS) -c $<
 
 $(DIR_DEPS)/%.d : $(DIR_SRC)/%.cpp
-	$(CXX) -M -MF $@ -MT $(DIR_OBJ)/$*.o $<
+	$(CXX) -M -MF $@ -MT $(DIR_OBJ)/$*.o -MP $<
 
 include $(wildcard $(DIR_DEPS)/*)
 
