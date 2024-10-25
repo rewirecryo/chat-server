@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include "Client.hpp"
+#include "Message.hpp"
 
 #define TRANSPORT_PROTOCOL_TCP 6
 #define SERVER_SOCKET_BACKLOG 3

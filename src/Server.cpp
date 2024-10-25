@@ -142,7 +142,7 @@ void Server::__startLoop()
 						{
 							try
 							{
-								(*iter).second.sendMessage(msg);
+								(*iter).second.send(msg.toJSON());
 							}
 							catch(const NetworkError &e)
 							{
