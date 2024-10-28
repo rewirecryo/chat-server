@@ -3,10 +3,7 @@
 
 #include <nlohmann/json.hpp>
 
-enum InstructionType
-{
-	UNKNOWN
-};
+#include "InstructionTypes.hpp"
 
 class Instruction
 {
