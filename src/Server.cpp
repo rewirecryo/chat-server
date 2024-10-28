@@ -97,7 +97,6 @@ void Server::__startLoop()
 					{
 						continue;
 					}
-					resetPollFDs();
 
 					// Receive the data the client's sending
 					char buf[RECV_BUF_SIZE];
@@ -204,13 +203,5 @@ void Server::removeClient(int fd)
 			__client_sockfds.erase(iter);
 			break;
 		}
-	}
-}
-
-void Server::resetPollFDs()
-{
-	for(struct pollfd &pfd : __client_sockfds)
-	{
-		pfd.events = POLLIN;
 	}
 }

@@ -46,11 +46,6 @@ private:
 	void checkForNewClients();
 
 	/**
-	 * @brief Set all the client-associated pollfd structs to be ready for another poll() call
-	 */
-	void resetPollFDs();
-
-	/**
 	 * @brief Start accepting connections and talking with clients
 	 */
 	void __startLoop();
