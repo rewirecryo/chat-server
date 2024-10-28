@@ -38,7 +38,7 @@ public:
 	 * @param fd - File descriptor with which the client is associated
 	 */
 	void removeClient(int fd);
-	
+
 private:
 	/**
 	 * @brief Accept any clients that are trying to connect

@@ -6,7 +6,7 @@ void Server::listen(const std::string &listen_addr, unsigned short port)
 	{
 		throw std::logic_error("Server::listen(): Cannot bind to port 0.");
 	}
-	
+
 	// Initialize hints. Define what criteria we have for the addresses we want to be returned.
 	struct addrinfo ai_base;
 	memset(&ai_base, 0, sizeof(ai_base));

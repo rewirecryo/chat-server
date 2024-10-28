@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 	}
 
 	server.listen("127.0.0.1", port);
-	
+
 	server.close();
 
 	return 0;

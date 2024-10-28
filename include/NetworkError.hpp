@@ -22,7 +22,7 @@ public:
 	{
 		return __error_number;
 	}
-	
+
 private:
 	std::string __what_text = "";
 	int __error_number = 0;
