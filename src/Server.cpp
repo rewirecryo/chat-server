@@ -130,26 +130,37 @@ void Server::__startLoop()
 						std::cerr << "JSON parsing error: Received malformed message: '" << buf << "'" << std::endl;
 					}
 
+					std::vector<std::shared_ptr<Instruction>> instruction_list;
+
+					for(nlohmann::json &j_instruction : j)
+					{
+						if(j_instruction.contains("instruction_type") == false)
+						{
+							throw std::runtime_error("Tried to parse non-instruction JSON object as an instruction JSON object.");
+						}
+
+						std::shared_ptr<Instruction> ins = std::shared_ptr<Instruction>(InstructionFactory::create(nullptr, j_instruction["instruction_type"]));
+						ins->fromJSON(j_instruction);
+						instruction_list.push_back(ins);
+					}
+
 					// Turn the JSON into a Message object
 					Client &c = __clients.at(returned_fds[i].fd);
-					if(j.contains("msg_text"))
+					for(auto &i : instruction_list)
 					{
-						Message msg(&c);
-						msg.text = j["msg_text"];
+						i->source_client = &c;
+						i->broadcast_clients = &__clients;
+					}
 
-						for(auto iter = __clients.begin(); iter != __clients.end(); ++iter)
+					try
+					{
+						__instruction_handler->handle(instruction_list);
+					}
+					catch(NetworkError &e)
+					{
+						if(e.no() == ECONNRESET)
 						{
-							try
-							{
-								(*iter).second.send(msg.toJSON());
-							}
-							catch(const NetworkError &e)
-							{
-								if(e.no() == ECONNRESET)
-								{
-									__clients.erase(iter);
-								}
-							}
+							__clients.erase(__clients.find(returned_fds[i].fd));
 						}
 					}
 				}

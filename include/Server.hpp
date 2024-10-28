@@ -8,7 +8,8 @@
 #include <unistd.h>
 
 #include "Client.hpp"
-#include "Message.hpp"
+#include "InstructionHandler.hpp"
+#include "InstructionFactory.hpp"
 
 #define TRANSPORT_PROTOCOL_TCP 6
 #define SERVER_SOCKET_BACKLOG 3
@@ -60,6 +61,8 @@ private:
 	std::vector<struct pollfd> __client_sockfds;
 	std::map<int, Client> __clients;
 	bool __running = false;
+	Context __context;
+	std::shared_ptr<InstructionHandler> __instruction_handler;
 };
 
 #endif
