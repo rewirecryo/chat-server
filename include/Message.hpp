@@ -2,14 +2,20 @@
 #define INCLUDED_CHATSERVER_MESSAGE_HPP
 
 #include <nlohmann/json.hpp>
+
 #include "Client.hpp"
 #include "Instruction.hpp"
+#include "Context.hpp"
+
 
 class Client;
 
 class Message : public Instruction
 {
 public:
+	Message(Client *c)
+		: Instruction(c) {}
+
 	void fromJSON(const nlohmann::json &j);
 
 	/**
@@ -17,7 +23,9 @@ public:
 	 */
 	nlohmann::json toJSON()const;
 
-	Client *client = nullptr;
+	void execute();
+
+	Client *source_client = nullptr;
 	std::string text;
 };
 #endif

@@ -134,8 +134,7 @@ void Server::__startLoop()
 					Client &c = __clients.at(returned_fds[i].fd);
 					if(j.contains("msg_text"))
 					{
-						Message msg;
-						msg.client = &c;
+						Message msg(&c);
 						msg.text = j["msg_text"];
 
 						for(auto iter = __clients.begin(); iter != __clients.end(); ++iter)
