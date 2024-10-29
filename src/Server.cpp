@@ -182,7 +182,7 @@ void Server::checkForNewClients()
 	else if(poll_result > 0)
 	{
 		struct sockaddr client_addr;
-		socklen_t client_addrlen; 
+		socklen_t client_addrlen = sizeof(client_addr);
 		int new_client_fd = accept(listening_pollfd.fd, &client_addr, &client_addrlen);
 
 		struct pollfd new_pollfd;
