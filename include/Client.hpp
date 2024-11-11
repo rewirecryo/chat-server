@@ -8,6 +8,7 @@
 #include <nlohmann/json.hpp>
 
 #include "NetworkError.hpp"
+#include "User.hpp"
 
 class Client
 {
@@ -28,9 +29,12 @@ public:
 
 	void send(const nlohmann::json &j);
 
+	const User *getUser()const;
+	void setUser(User *user);
 
 private:
 	int __fd;
+	User *__user = nullptr; /** This client is logged in as what user? */
 };
 
 #endif

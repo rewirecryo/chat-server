@@ -25,3 +25,13 @@ void Client::send(const nlohmann::json &j)
 {
 	send(j.dump().c_str(), j.dump().size() + 1);
 }
+
+const User *Client::getUser()const
+{
+	return __user;
+}
+
+void Client::setUser(User *user)
+{
+	__user = user;
+}
