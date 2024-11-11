@@ -5,12 +5,10 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <nlohmann/json.hpp>
 
-
-#include "Message.hpp"
 #include "NetworkError.hpp"
 
-class Message;
 class Client
 {
 public:
@@ -22,11 +20,14 @@ public:
 	void kick();
 
 	/**
-	 * @brief Send a properly-formatted message to this client
+	 * @brief Send text to this client
 	 *
 	 * @param msg Message to send
 	 */
-	void sendMessage(const Message &msg);
+	void send(const void *buf, size_t size);
+
+	void send(const nlohmann::json &j);
+
 
 private:
 	int __fd;

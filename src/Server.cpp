@@ -6,7 +6,7 @@ void Server::listen(const std::string &listen_addr, unsigned short port)
 	{
 		throw std::logic_error("Server::listen(): Cannot bind to port 0.");
 	}
-	
+
 	// Initialize hints. Define what criteria we have for the addresses we want to be returned.
 	struct addrinfo ai_base;
 	memset(&ai_base, 0, sizeof(ai_base));
@@ -97,7 +97,6 @@ void Server::__startLoop()
 					{
 						continue;
 					}
-					resetPollFDs();
 
 					// Receive the data the client's sending
 					char buf[RECV_BUF_SIZE];
@@ -130,27 +129,37 @@ void Server::__startLoop()
 						std::cerr << "JSON parsing error: Received malformed message: '" << buf << "'" << std::endl;
 					}
 
+					std::vector<std::shared_ptr<Instruction>> instruction_list;
+
+					for(nlohmann::json &j_instruction : j)
+					{
+						if(j_instruction.contains("instruction_type") == false)
+						{
+							throw std::runtime_error("Tried to parse non-instruction JSON object as an instruction JSON object.");
+						}
+
+						std::shared_ptr<Instruction> ins = std::shared_ptr<Instruction>(InstructionFactory::create(nullptr, j_instruction["instruction_type"]));
+						ins->fromJSON(j_instruction);
+						instruction_list.push_back(ins);
+					}
+
 					// Turn the JSON into a Message object
 					Client &c = __clients.at(returned_fds[i].fd);
-					if(j.contains("msg_text"))
+					for(auto &i : instruction_list)
 					{
-						Message msg;
-						msg.client = &c;
-						msg.text = j["msg_text"];
+						i->source_client = &c;
+						i->broadcast_clients = &__clients;
+					}
 
-						for(auto iter = __clients.begin(); iter != __clients.end(); ++iter)
+					try
+					{
+						__instruction_handler->handle(instruction_list);
+					}
+					catch(NetworkError &e)
+					{
+						if(e.no() == ECONNRESET)
 						{
-							try
-							{
-								(*iter).second.sendMessage(msg);
-							}
-							catch(const NetworkError &e)
-							{
-								if(e.no() == ECONNRESET)
-								{
-									__clients.erase(iter);
-								}
-							}
+							__clients.erase(__clients.find(returned_fds[i].fd));
 						}
 					}
 				}
@@ -173,7 +182,7 @@ void Server::checkForNewClients()
 	else if(poll_result > 0)
 	{
 		struct sockaddr client_addr;
-		socklen_t client_addrlen; 
+		socklen_t client_addrlen = sizeof(client_addr);
 		int new_client_fd = accept(listening_pollfd.fd, &client_addr, &client_addrlen);
 
 		struct pollfd new_pollfd;
@@ -194,13 +203,5 @@ void Server::removeClient(int fd)
 			__client_sockfds.erase(iter);
 			break;
 		}
-	}
-}
-
-void Server::resetPollFDs()
-{
-	for(struct pollfd &pfd : __client_sockfds)
-	{
-		pfd.events = POLLIN;
 	}
 }

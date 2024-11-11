@@ -13,14 +13,15 @@ void Client::kick()
 	}
 }
 
-void Client::sendMessage(const Message &msg)
+void Client::send(const void *buf, size_t size)
 {
-	int ret;
-
-	nlohmann::json msg_json = msg.toJSON();
-		
-	if((ret = send(__fd, msg_json.dump().c_str(), std::min<size_t>(msg_json.dump().size(), 1023), 0)) == -1)
+	if(::send(__fd, buf, size, 0) == -1)
 	{
 		throw NetworkError(strerror(errno));
 	}
+}
+
+void Client::send(const nlohmann::json &j)
+{
+	send(j.dump().c_str(), j.dump().size() + 1);
 }
