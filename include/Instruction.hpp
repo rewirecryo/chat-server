@@ -5,6 +5,7 @@
 
 #include "Client.hpp"
 #include "InstructionTypes.hpp"
+#include "Context.hpp"
 
 class Instruction
 {
@@ -32,6 +33,8 @@ public:
 	 * The list of clients to broadcast to, if this instruction broadcasts anything
 	 */
 	std::map<int, Client> *broadcast_clients = nullptr;
+
+	Context *context = nullptr;
 
 private:
 	const int __type = InstructionType::UNKNOWN;
