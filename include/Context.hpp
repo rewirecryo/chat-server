@@ -8,6 +8,7 @@
 
 class Context
 {
+public:
 	std::map<int, Client> *client_list = nullptr;
 	std::vector<User> *user_list = nullptr;
 };
