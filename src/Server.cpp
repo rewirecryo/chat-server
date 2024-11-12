@@ -46,6 +46,10 @@ void Server::listen(const std::string &listen_addr, unsigned short port)
 
 	__fd = fd;
 
+	// Initialize our Context object
+	__context.client_list = &__clients;
+	__context.user_list = &__users;
+
 	__startLoop();
 }
 
