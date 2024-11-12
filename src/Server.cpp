@@ -31,7 +31,7 @@ void Server::listen(const std::string &listen_addr, unsigned short port)
 
 	int reuseaddr_yes = 1;
 	setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &reuseaddr_yes, sizeof(reuseaddr_yes));
-		
+
 	// Bind our socket to a local address
 	if(bind(fd, returned_ai->ai_addr, returned_ai->ai_addrlen) == -1)
 	{
@@ -65,7 +65,7 @@ void Server::close()
 			throw NetworkError(strerror(errno));
 		}
 	}
-		
+
 	if(::close(__fd) == -1)
 	{
 		throw NetworkError(strerror(errno));
@@ -177,7 +177,7 @@ void Server::checkForNewClients()
 	struct pollfd listening_pollfd;
 	listening_pollfd.fd = __fd;
 	listening_pollfd.events = POLLIN;
-			
+
 	int poll_result = poll(&listening_pollfd, 1, POLL_TIMEOUT_MS);
 	if(poll_result == -1)
 	{
