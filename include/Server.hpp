@@ -55,6 +55,7 @@ private:
 	int __fd = -1;
 	std::vector<struct pollfd> __client_sockfds;
 	std::map<int, Client> __clients;
+	std::vector<User> __users;
 	bool __running = false;
 	Context __context;
 	std::shared_ptr<InstructionHandler> __instruction_handler;
