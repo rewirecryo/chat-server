@@ -29,7 +29,7 @@ public:
 
 	void send(const nlohmann::json &j);
 
-	const User *getUser()const;
+	User *getUser()const;
 	void setUser(User *user);
 
 private:

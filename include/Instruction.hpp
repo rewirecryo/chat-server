@@ -5,39 +5,29 @@
 
 #include "Client.hpp"
 #include "InstructionTypes.hpp"
-#include "Context.hpp"
 
 class Instruction
 {
 public:
-	Instruction(Client *src_cli);
+	Instruction();
 
-	virtual void fromJSON(const nlohmann::json &j) = 0;
 	virtual nlohmann::json toJSON()const = 0;
 
 	int getType()const;
 
-	virtual void execute() = 0;
+	void setInstructionID(int new_id);
+	int getInstructionID()const;
 
-	/**
-	 * Client that sent this instruction
-	 */
-	Client *source_client = nullptr;
+	int getRespondee()const;
+	void setRespondee(int respondee_id);
+	
+protected:
+	void __setType(InstructionType new_type);
+	nlohmann::json __jsonTemplate()const;
 
-	/**
-	 * Clients that this instruction is targeting
-	 */
-	std::vector<Client*> target_clients;
-
-	/**
-	 * The list of clients to broadcast to, if this instruction broadcasts anything
-	 */
-	std::map<int, Client> *broadcast_clients = nullptr;
-
-	Context *context = nullptr;
-
-private:
-	const int __type = InstructionType::UNKNOWN;
+	int __respondee = -1;
+	int __instruction_id = -1;
+	InstructionType __type = InstructionType::UNKNOWN;
 };
 
 #endif

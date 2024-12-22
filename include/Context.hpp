@@ -9,8 +9,8 @@
 class Context
 {
 public:
-	std::map<int, Client> *client_list = nullptr;
-	std::vector<User> *user_list = nullptr;
+	std::map<int, std::shared_ptr<Client>> *clients = nullptr;
+	std::map<unsigned int, std::shared_ptr<User>> *users = nullptr;
 };
 
 #endif

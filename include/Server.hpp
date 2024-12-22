@@ -8,8 +8,9 @@
 #include <unistd.h>
 
 #include "Client.hpp"
-#include "InstructionHandler.hpp"
 #include "InstructionFactory.hpp"
+#include "Executor.hpp"
+#include "ExecutorFactory.hpp"
 
 #define TRANSPORT_PROTOCOL_TCP 6
 #define SERVER_SOCKET_BACKLOG 3
@@ -54,11 +55,11 @@ private:
 	short port;
 	int __fd = -1;
 	std::vector<struct pollfd> __client_sockfds;
-	std::map<int, Client> __clients;
-	std::vector<User> __users;
+	std::map<int, std::shared_ptr<Client>> __clients;
+	std::map<unsigned int, std::shared_ptr<User>> __users;
 	bool __running = false;
 	Context __context;
-	std::shared_ptr<InstructionHandler> __instruction_handler;
+	InstructionFactory __instruction_factory;
 };
 
 #endif

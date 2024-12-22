@@ -47,8 +47,8 @@ void Server::listen(const std::string &listen_addr, unsigned short port)
 	__fd = fd;
 
 	// Initialize our Context object
-	__context.client_list = &__clients;
-	__context.user_list = &__users;
+	__context.clients = &__clients;
+	__context.users = &__users;
 
 	__startLoop();
 }
@@ -133,37 +133,21 @@ void Server::__startLoop()
 						std::cerr << "JSON parsing error: Received malformed message: '" << buf << "'" << std::endl;
 					}
 
-					std::vector<std::shared_ptr<Instruction>> instruction_list;
-
-					for(nlohmann::json &j_instruction : j)
+					// Execute all the instructions
+					for(nlohmann::json &j_instruction : j["instruction_list"])
 					{
-						if(j_instruction.contains("instruction_type") == false)
+						// Reject an instruction without a type
+						if(j_instruction.contains("request_type") == false)
 						{
 							throw std::runtime_error("Tried to parse non-instruction JSON object as an instruction JSON object.");
 						}
 
-						std::shared_ptr<Instruction> ins = std::shared_ptr<Instruction>(InstructionFactory::create(nullptr, j_instruction["instruction_type"]));
-						ins->fromJSON(j_instruction);
-						instruction_list.push_back(ins);
-					}
-
-					// Turn the JSON into a Message object
-					Client &c = __clients.at(returned_fds[i].fd);
-					for(auto &i : instruction_list)
-					{
-						i->source_client = &c;
-						i->broadcast_clients = &__clients;
-					}
-
-					try
-					{
-						__instruction_handler->handle(instruction_list);
-					}
-					catch(NetworkError &e)
-					{
-						if(e.no() == ECONNRESET)
+						// Execute the instruction
+						std::shared_ptr<Executor> executor = ExecutorFactory::create((ExecutorType)(j_instruction["request_type"]));
+						int fulfilled_ins = executor->execute(j_instruction, __clients[returned_fds[i].fd].get(), &__context, &__instruction_factory);
+						if(fulfilled_ins != -1)
 						{
-							__clients.erase(__clients.find(returned_fds[i].fd));
+							__instruction_factory.fulfill(fulfilled_ins); // Tell the factory this instruction has been fulfilled
 						}
 					}
 				}
@@ -193,7 +177,7 @@ void Server::checkForNewClients()
 		new_pollfd.fd = new_client_fd;
 		new_pollfd.events = POLLIN;
 		__client_sockfds.push_back(new_pollfd);
-		__clients.insert(std::make_pair(new_pollfd.fd, Client(new_pollfd.fd)));
+		__clients.insert(std::make_pair(new_pollfd.fd, std::make_shared<Client>(new_pollfd.fd)));
 	}
 }
 
